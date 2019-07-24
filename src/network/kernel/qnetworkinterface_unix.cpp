@@ -38,7 +38,6 @@
 **
 ****************************************************************************/
 
-#include "qbytearray.h"
 #include "qset.h"
 #include "qnetworkinterface.h"
 #include "qnetworkinterface_p.h"
@@ -501,7 +500,7 @@ static QList<QNetworkInterfacePrivate *> createInterfaces(ifaddrs *rawList)
             iface->flags = convertFlags(ptr->ifa_flags);
             iface->hardwareAddress = iface->makeHwAddress(sdl->sdl_alen, (uchar*)LLADDR(sdl));
 
-            qstrncpy(mediareq.ifm_name, ptr->ifa_name, sizeof(mediareq.ifm_name));
+            strlcpy(mediareq.ifm_name, ptr->ifa_name, sizeof(mediareq.ifm_name));
             iface->type = probeIfType(openSocket(socket), sdl->sdl_type, &mediareq);
             iface->mtu = getMtu(socket, &req);
         }
@@ -525,7 +524,7 @@ static void getAddressExtraInfo(QNetworkAddressEntry *entry, struct sockaddr *sa
         return;
     }
 
-    qstrncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
+    strlcpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
 
     // get flags
     ifr.ifr_addr = *reinterpret_cast<struct sockaddr_in6 *>(sa);

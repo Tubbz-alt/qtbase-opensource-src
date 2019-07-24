@@ -1,2 +1,0 @@
-# qtbase-opensource-src
-

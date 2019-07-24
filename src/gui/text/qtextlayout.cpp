@@ -1006,8 +1006,10 @@ static void addSelectedRegionsToPath(QTextEngine *eng, int lineNumber, const QPo
             }
 
             if (lastSelectionWidth > 0) {
-                const QRectF rect = boundingRect & QRectF(lastSelectionX.toReal(), selectionY, lastSelectionWidth.toReal(), lineHeight);
-                region->addRect(rect.toAlignedRect());
+                QRectF rect = boundingRect & QRectF(lastSelectionX.toReal(), selectionY, lastSelectionWidth.toReal(), lineHeight);
+                rect.moveLeft(qFloor(rect.left()));
+                rect.moveTop(qFloor(rect.top()));
+                region->addRect(rect);
             }
 
             lastSelectionX = selectionX;
@@ -1015,8 +1017,10 @@ static void addSelectedRegionsToPath(QTextEngine *eng, int lineNumber, const QPo
         }
     }
     if (lastSelectionWidth > 0) {
-        const QRectF rect = boundingRect & QRectF(lastSelectionX.toReal(), selectionY, lastSelectionWidth.toReal(), lineHeight);
-        region->addRect(rect.toAlignedRect());
+        QRectF rect = boundingRect & QRectF(lastSelectionX.toReal(), selectionY, lastSelectionWidth.toReal(), lineHeight);
+        rect.moveLeft(qFloor(rect.left()));
+        rect.moveTop(qFloor(rect.top()));
+        region->addRect(rect);
     }
 }
 
@@ -2131,7 +2135,7 @@ static void setPenAndDrawBackground(QPainter *p, const QPen &defaultPen, const Q
 
     QBrush bg = chf.background();
     if (bg.style() != Qt::NoBrush && !chf.property(SuppressBackground).toBool())
-        p->fillRect(r.toAlignedRect(), bg);
+        p->fillRect(QRectF(qFloor(r.x()), qFloor(r.y()), r.width(), r.height()), bg);
     if (c.style() != Qt::NoBrush) {
         p->setPen(QPen(c, 0));
     }

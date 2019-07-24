@@ -1,5 +1,6 @@
 TEMPLATE      = subdirs
-SUBDIRS       = xmlstreamlint
+SUBDIRS       = htmlinfo \
+                xmlstreamlint
 
 qtHaveModule(widgets) {
     SUBDIRS +=  dombookmarks \
