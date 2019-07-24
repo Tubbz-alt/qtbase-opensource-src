@@ -19,3 +19,23 @@ kfreebsd_qstrncpy.diff
 alpha_atimensec.diff
 revert_remove_our_use_of_syscall_for-statx.patch
 hurd_missing_include.diff
+
+# deepin patch
+0001-High-dpi-drawTiledPixmap-raster-paint-engine.patch
+0002-StyleSheetStyle-Load-Nx-images.patch
+0003-StyleSheetStyle-fix-distorted-hiDPI-pngs.patch
+#0004-QGraphicsDropShadowEffect-Fix-for-high-DPI-scaling.patch
+#0005-QGraphicsBlurEffect-Fix-for-high-DPI-scaling.patch
+#0006-QGraphicsColorizeEffect-Fix-for-high-DPI-scaling.patch
+#0007-QGraphicsEffect-Fix-for-draw-error-size-in-decimal-scale-factor.patch
+#0008-load-qss-svg-by-scale.patch
+0009-fix_qss_border_cap_style.patch
+fix_qstylesheetstyle_clip_border_error.patch
+#nonblock-inotify.patch
+#Fix_calculating_window_mask_form_pixmap_on_drag_and_drop.patch
+fix_qrasterpaintengine_rect_for_hidpi.patch
+#Fix-division-by-zero.patch
+#fix_qregion_scale_for_hidpi.patch
+#fix_clipboard_big_image_data.patch
+#dnot_add_application_path_to_library_path_for_default.patch
+#add_fix_root_window_events.patch
