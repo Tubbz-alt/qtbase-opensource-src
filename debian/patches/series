@@ -37,5 +37,5 @@ fix_qrasterpaintengine_rect_for_hidpi.patch
 #Fix-division-by-zero.patch
 #fix_qregion_scale_for_hidpi.patch
 #fix_clipboard_big_image_data.patch
-#dnot_add_application_path_to_library_path_for_default.patch
+dnot_add_application_path_to_library_path_for_default.patch
 #add_fix_root_window_events.patch
