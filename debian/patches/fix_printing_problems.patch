@@ -1,0 +1,16 @@
+Index: qtbase-opensource-src/src/printsupport/dialogs/qprintdialog_unix.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/printsupport/dialogs/qprintdialog_unix.cpp
++++ qtbase-opensource-src/src/printsupport/dialogs/qprintdialog_unix.cpp
+@@ -1544,6 +1544,11 @@ void QPPDOptionsModel::parseChoices(QOpt
+             parent->childItems.append(choice);
+         }
+     }
++
++    // selected not initialized when defchoice is undefined
++    if (parent->selected < 0 || parent->selected >= option->num_choices) {
++        parent->originallySelected = parent->selected = 0;
++    }
+ }
+ 
+ bool QPPDOptionsModel::hasConflicts() const
