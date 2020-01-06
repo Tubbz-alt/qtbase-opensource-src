@@ -42,3 +42,4 @@ dnot_add_application_path_to_library_path_for_default.patch
 fix_printing_problems.patch
 fix_touchScreen_problems.patch
 fix_clipboard_big_image_data.patch
+fix-combobox-can't-popup-on-mouse-release.patch
