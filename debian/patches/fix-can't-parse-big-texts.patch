@@ -1,0 +1,40 @@
+Description: Fix can't parse big-texts(4MB) to Qt application
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ qtbase-opensource-src (5.11.3.5-1+deepin) unstable; urgency=low
+ .
+   * ['Autobuild release-candidate: ec09ce1048e94cf8dd2c7cd3723325975c1092b1']
+Author: zccrs <zccrs@live.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: 2020-01-07
+
+--- qtbase-opensource-src-5.11.3.5.orig/src/plugins/platforms/xcb/qxcbclipboard.cpp
++++ qtbase-opensource-src-5.11.3.5/src/plugins/platforms/xcb/qxcbclipboard.cpp
+@@ -956,7 +956,11 @@ QByteArray QXcbClipboard::clipboardReadI
+                 offset += length;
+             }
+         } else {
+-            break;
++	    //waitForClipboardEvent等待到的事件不一定有效，事件队列中还存在其它有效
++	    //事件等待获取，此处应当继续wait事件，而不是直接break。
++	    //正确的改法应当是在wait事件时，判断事件队列中是否存在此窗口属性被删除
++	    //的消息，如果有，应当抛弃这次wait到的时间，转而继续wait
++            //break;
+         }
+ 
+         free(ge);

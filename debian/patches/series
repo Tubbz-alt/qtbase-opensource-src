@@ -43,3 +43,4 @@ fix_printing_problems.patch
 fix_touchScreen_problems.patch
 fix_clipboard_big_image_data.patch
 fix-combobox-can't-popup-on-mouse-release.patch
+fix-can't-parse-big-texts.patch
