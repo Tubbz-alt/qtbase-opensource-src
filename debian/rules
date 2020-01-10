@@ -29,7 +29,7 @@ ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(no_pch_architectures)))
 	extra_configure_opts += -no-pch
 endif
 
-gles2_architectures := armel armhf
+gles2_architectures := armel armhf arm64
 ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(gles2_architectures)))
 	extra_configure_opts += -opengl es2
 else
@@ -69,7 +69,7 @@ else
 endif
 
 %:
-	dh $@ --with pkgkde_symbolshelper
+	dh $@
 
 override_dh_auto_configure:
 	MAKEFLAGS="-j$(NUMJOBS) ${CXXFLAGS:%=EXTRA_CXXFLAGS+=%} ${LDFLAGS:%=EXTRA_LFLAGS+=%}" \
@@ -110,7 +110,7 @@ override_dh_auto_configure:
 	            -dbus-linked \
 	            -no-strip \
 	            -no-separate-debug-info \
-	            -qpa xcb \
+	            -qpa wayland-egl \
 	            -xcb \
 	            -glib \
 	            -icu \
@@ -285,8 +285,8 @@ endif
 override_dh_auto_install-indep:
 	dh_auto_build -- INSTALL_ROOT=$(CURDIR)/debian/tmp install_docs
 
-override_dh_missing:
-	dh_missing --fail-missing
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
 
 override_dh_installchangelogs:
 	if [ -f $(upstream_changes) ] ; then \
