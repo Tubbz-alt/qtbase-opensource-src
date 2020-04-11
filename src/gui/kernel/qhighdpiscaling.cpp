@@ -44,8 +44,31 @@
 #include "private/qscreen_p.h"
 
 #include <QtCore/qdebug.h>
-
+#include <QProcessEnvironment>
+#include <QtDBus/QtDBus>
+#include <QDBusInterface>
 QT_BEGIN_NAMESPACE
+bool static waylandDectected()
+{
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    return XDG_SESSION_TYPE == QLatin1String("wayland") ||
+           WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive);
+}
+qreal static getActualScal()
+{
+    QDBusInterface interface(QString("com.deepin.SessionManager")
+                             , QString("/com/deepin/XSettings")
+                             , QString("com.deepin.XSettings")
+                             , QDBusConnection::sessionBus());
+    QList<QVariant> argumentList;
+    QDBusPendingCall call = interface.asyncCallWithArgumentList(QStringLiteral("GetScaleFactor"), argumentList);
+    QDBusPendingReply<qreal> reply(call);
+
+    return reply.value();
+}
 
 Q_LOGGING_CATEGORY(lcScaling, "qt.scaling");
 
@@ -408,6 +431,9 @@ QDpi QHighDpiScaling::logicalDpi()
 
 qreal QHighDpiScaling::factor(const QScreen *screen)
 {
+    if(waylandDectected())
+        return  getActualScal();
+
     // Fast path for when scaling in Qt is not used at all.
     if (!m_active)
         return qreal(1.0);
@@ -422,6 +448,9 @@ qreal QHighDpiScaling::factor(const QScreen *screen)
 
 qreal QHighDpiScaling::factor(const QPlatformScreen *platformScreen)
 {
+    if(waylandDectected())
+        return  getActualScal();
+
     if (!m_active)
         return qreal(1.0);
 
@@ -430,6 +459,9 @@ qreal QHighDpiScaling::factor(const QPlatformScreen *platformScreen)
 
 qreal QHighDpiScaling::factor(const QWindow *window)
 {
+    if(waylandDectected())
+        return  getActualScal();
+
     if (!m_active)
         return qreal(1.0);
 
