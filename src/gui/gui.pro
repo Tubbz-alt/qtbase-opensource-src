@@ -1,5 +1,6 @@
 TARGET     = QtGui
 QT = core-private
+QT += dbus
 
 qtConfig(opengl.*): MODULE_CONFIG = opengl
 
