@@ -59,15 +59,26 @@ bool static waylandDectected()
 }
 qreal static getActualScal()
 {
-    QDBusInterface interface(QString("com.deepin.SessionManager")
-                             , QString("/com/deepin/XSettings")
-                             , QString("com.deepin.XSettings")
-                             , QDBusConnection::sessionBus());
-    QList<QVariant> argumentList;
-    QDBusPendingCall call = interface.asyncCallWithArgumentList(QStringLiteral("GetScaleFactor"), argumentList);
-    QDBusPendingReply<qreal> reply(call);
+    static qreal s_actualScal = 0;
+    static bool s_isFirst = true;
+    if (s_isFirst) {
+        QDBusInterface interface(QString("com.deepin.SessionManager")
+                                 , QString("/com/deepin/XSettings")
+                                 , QString("com.deepin.XSettings")
+                                 , QDBusConnection::sessionBus());
+        QList<QVariant> argumentList;
+        QDBusPendingCall call = interface.asyncCallWithArgumentList(QStringLiteral("GetScaleFactor"), argumentList);
+        QDBusPendingReply<qreal> reply(call);
+        s_actualScal = reply.value();
 
-    return reply.value();
+        s_isFirst = false;
+        if ((s_actualScal < 0) || (s_actualScal > 1000)) {
+            s_actualScal = 1;
+            s_isFirst = true;
+        }
+    }
+
+    return s_actualScal;
 }
 
 Q_LOGGING_CATEGORY(lcScaling, "qt.scaling");
