@@ -45,3 +45,4 @@ fix_clipboard_big_image_data.patch
 fix-combobox-can't-popup-on-mouse-release.patch
 fix-can't-parse-big-texts.patch
 fix-network-defer-call-to-_q_networkSessionStateChanged.patch
+QTBUG-72244-Fix-crash-when-multiple-scrollers-are-registered

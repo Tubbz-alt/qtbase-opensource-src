@@ -1,0 +1,43 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ qtbase-opensource-src (5.11.3.7-1+deepin) unstable; urgency=low
+ .
+   * ['Autobuild release-candidate: 2db89a1a675981348bab55a66da8b8423c134cd7']
+Author: shuttle <shuttle@deepin.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: 2020-02-24
+
+--- qtbase-opensource-src-5.11.3.7.orig/src/widgets/util/qscroller.cpp
++++ qtbase-opensource-src-5.11.3.7/src/widgets/util/qscroller.cpp
+@@ -1733,10 +1733,12 @@ void QScrollerPrivate::setState(QScrolle
+         sendEvent(target, &se);
+         firstScroll = true;
+     }
+-    if (state == QScroller::Dragging || state == QScroller::Scrolling)
+-        qt_activeScrollers()->push_back(q);
+-    else
++    if (state == QScroller::Dragging || state == QScroller::Scrolling) {
++        if (!qt_activeScrollers()->contains(q))
++            qt_activeScrollers()->push_back(q);
++    } else {
+         qt_activeScrollers()->removeOne(q);
++    }
+     emit q->stateChanged(state);
+ }
+ 
