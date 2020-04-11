@@ -1,0 +1,39 @@
+Description: <short summary of the patch>
+ TODO: Put a short summary on the line above and replace this paragraph
+ with a longer explanation of this change. Complete the meta-information
+ with other relevant fields (see below for details). To make it easier, the
+ information below has been extracted from the changelog. Adjust it or drop
+ it.
+ .
+ qtbase-opensource-src (5.11.3.8-1+deepin) unstable; urgency=low
+ .
+   * ['Autobuild release-candidate: 5c124e0c411e7a290f7755d5463ba940aaeca592']
+Author: shuttle <shuttle@deepin.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: 2020-03-09
+
+--- qtbase-opensource-src-5.11.3.8.orig/src/network/access/qhttpnetworkconnectionchannel.cpp
++++ qtbase-opensource-src-5.11.3.8/src/network/access/qhttpnetworkconnectionchannel.cpp
+@@ -966,7 +966,10 @@ void QHttpNetworkConnectionChannel::_q_e
+         } else if (state != QHttpNetworkConnectionChannel::IdleState && state != QHttpNetworkConnectionChannel::ReadingState) {
+             // Try to reconnect/resend before sending an error.
+             // While "Reading" the _q_disconnected() will handle this.
+-            if (reconnectAttempts-- > 0) {
++            // If we're using ssl then the protocolHandler is not initialized until
++            // "encrypted" has been emitted, since retrying requires the protocolHandler (asserted)
++            // we will not try if encryption is not done.
++            if (!pendingEncrypt && reconnectAttempts-- > 0) {
+                 resendCurrentRequest();
+                 return;
+             } else {
