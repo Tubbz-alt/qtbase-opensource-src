@@ -47,3 +47,4 @@ fix-can't-parse-big-texts.patch
 fix-network-defer-call-to-_q_networkSessionStateChanged.patch
 QTBUG-72244-Fix-crash-when-multiple-scrollers-are-registered
 merge-QTBUG-47822-Dont-retry-a-ssl-connection-if-encryption-was-never-finished.patch
+fix_action_distance_lineedit.patch
