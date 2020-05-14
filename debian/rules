@@ -68,6 +68,12 @@ else
 	NUMJOBS = 1
 endif
 
+ifeq ($(findstring mips64el, $(DEB_HOST_ARCH)), mips64el)
+export DEB_CFLAGS_MAINT_APPEND := -falign-functions=64 -falign-jumps=64 -falign-labels=64 -falign-loops=64 -malign-llsc-target
+export DEB_CPPFLAGS_MAINT_APPEND := -falign-functions=64 -falign-jumps=64 -falign-labels=64 -falign-loops=64 -malign-llsc-target
+export DEB_CXXFLAGS_MAINT_APPEND := -falign-functions=64 -falign-jumps=64 -falign-labels=64 -falign-loops=64 -malign-llsc-target
+endif
+
 %:
 	dh $@ --with pkgkde_symbolshelper
 
