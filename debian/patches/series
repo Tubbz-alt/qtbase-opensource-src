@@ -4,6 +4,12 @@ reference_dpi.diff
 remove_need_for_glXGetProcAddressARB.patch
 mysql_free_results_when_qsqlquery_finished_is_called.patch
 qprintdialog_duplex.diff
+cve-2019-18281.diff
+raw_printers.diff
+ensure-qtabletevent-is-not-pre-accepted.patch
+repolish_run_on_direct_children.diff
+CVE-2020-0569.diff
+CVE-2020-0570.diff
 
 # Debian specific.
 gnukfreebsd.diff
@@ -49,3 +55,4 @@ QTBUG-72244-Fix-crash-when-multiple-scrollers-are-registered
 merge-QTBUG-47822-Dont-retry-a-ssl-connection-if-encryption-was-never-finished.patch
 fix_action_distance_lineedit.patch
 fix-Clicking-the-left-and-right-buttons-crash.patch
+deepin-CVE-2015-9541.patch
