@@ -1,0 +1,13 @@
+Index: qtbase-opensource-src/src/widgets/widgets/qlineedit_p.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/widgets/widgets/qlineedit_p.cpp
++++ qtbase-opensource-src/src/widgets/widgets/qlineedit_p.cpp
+@@ -73,7 +73,7 @@ QRect QLineEditPrivate::adjustedControlR
+     QRect widgetRect = !rect.isEmpty() ? rect : q_func()->rect();
+     QRect cr = adjustedContentsRect();
+     int cix = cr.x() - hscroll + horizontalMargin;
+-    return widgetRect.translated(QPoint(cix, vscroll));
++    return widgetRect.translated(QPoint(cix, vscroll - control->ascent() + q_func()->fontMetrics().ascent()));
+ }
+ 
+ int QLineEditPrivate::xToPos(int x, QTextLine::CursorPosition betweenOrOn) const
