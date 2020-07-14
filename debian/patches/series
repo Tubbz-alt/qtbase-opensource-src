@@ -49,3 +49,4 @@ QTBUG-72244-Fix-crash-when-multiple-scrollers-are-registered
 merge-QTBUG-47822-Dont-retry-a-ssl-connection-if-encryption-was-never-finished.patch
 fix_action_distance_lineedit.patch
 fix-Clicking-the-left-and-right-buttons-crash.patch
+fix_lineedit_currsor_update_pms29329.patch
