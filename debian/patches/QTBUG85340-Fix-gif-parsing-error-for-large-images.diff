@@ -1,0 +1,34 @@
+From 61fced375a202dbf48ceb22153c2976d91ad989b Mon Sep 17 00:00:00 2001
+From: Tang HaiXiang <tanghaixiang@uniontech.com>
+Date: Mon, 06 Jul 2020 14:27:49 +0800
+Subject: [PATCH] Fix gif parsing error for large images
+
+A very large GIF image resulted in cropping of image updates, due to
+the handler trying to protect against very large values.
+
+Increase that size from 200 to 16384, which is also the value used
+in the withinSizeLimit method.
+
+Fixes: QTBUG-85340
+Pick-to: 5.15
+Change-Id: I70888d76b378ee4f49694e90d7d753fae817ff2a
+Reviewed-by: Lu YaNing <luyaning@uniontech.com>
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+---
+
+diff --git a/src/plugins/imageformats/gif/qgifhandler.cpp b/src/plugins/imageformats/gif/qgifhandler.cpp
+index b6322f0..23a768e 100644
+--- a/src/plugins/imageformats/gif/qgifhandler.cpp
++++ b/src/plugins/imageformats/gif/qgifhandler.cpp
+@@ -342,9 +342,9 @@
+ 
+                 // disbelieve ridiculous logical screen sizes,
+                 // unless the image frames are also large.
+-                if (swidth/10 > qMax(newwidth,200))
++                if (swidth/10 > qMax(newwidth,16384))
+                     swidth = -1;
+-                if (sheight/10 > qMax(newheight,200))
++                if (sheight/10 > qMax(newheight,16384))
+                     sheight = -1;
+ 
+                 if (swidth <= 0)
