@@ -1,3 +1,10 @@
+qtbase-opensource-src (5.11.3.15.1-1+dde) unstable; urgency=medium
+
+  * Update version number, synchronize local version number.
+  * 
+
+ -- liuxin <liuxin@uniontech.com>  Thu, 23 Jul 2020 16:01:36 +0800
+
 qtbase-opensource-src (5.11.3+dfsg1-1+deb10u3) buster-security; urgency=high
 
   [ Dmitry Shachnev ]
