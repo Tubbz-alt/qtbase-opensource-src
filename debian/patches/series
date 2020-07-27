@@ -51,3 +51,4 @@ fix_action_distance_lineedit.patch
 fix-Clicking-the-left-and-right-buttons-crash.patch
 fix_lineedit_currsor_update_pms29329.patch
 QTBUG85340-Fix-gif-parsing-error-for-large-images.diff
+QTBUG-82601-Fix-under-non-integer-scaling-incorrect-update-area.patch
