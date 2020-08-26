@@ -1,0 +1,169 @@
+Index: qtbase-opensource-src/src/widgets/widgets/qlineedit.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/widgets/widgets/qlineedit.cpp
++++ qtbase-opensource-src/src/widgets/widgets/qlineedit.cpp
+@@ -1493,6 +1493,12 @@ void QLineEdit::mousePressEvent(QMouseEv
+ {
+     Q_D(QLineEdit);
+ 
++    if (e->source() == Qt::MouseEventSynthesizedByQt) {
++        d->touchPress = true;
++        if (d->touchPopup)
++            d->touchPopup = false;
++        d->oldPosX = e->screenPos().x();
++    }
+     d->mousePressPos = e->pos();
+ 
+     if (d->sendMouseEventToInputContext(e))
+@@ -1525,7 +1531,13 @@ void QLineEdit::mousePressEvent(QMouseEv
+     } else
+ #endif
+     {
+-        d->control->moveCursor(cursor, mark);
++        if (d->touchPress) {
++            d->CurrentCursor = cursor;
++            d->modStateMark = mark;
++            QTimer::singleShot(QApplication::doubleClickInterval(), this, SLOT(_q_waitTouchPopup()));
++        } else {
++            d->control->moveCursor(cursor, mark);
++        }
+     }
+ }
+ 
+@@ -1568,6 +1580,26 @@ void QLineEdit::mouseMoveEvent(QMouseEve
+             } else
+ #endif
+             {
++                if (d->oldPosX == 0) {
++                    d->oldPosX = e->screenPos().x();
++                    return;
++                }
++
++                if (d->doublePress)
++                    return;
++
++                // 1.0: Touch jitter causes the range of coordinates to change
++                if ((d->touchPress && !d->touchPopup) && (qAbs(e->screenPos().x() - d->oldPosX) < 1.0)) {
++                    d->oldPosX = e->screenPos().x();
++                    return;
++                }
++
++                d->oldPosX = e->screenPos().x();
++
++                //A long press under the touch screen will trigger Qt::MouseEventSource(MouseEventNotSynthesized)
++                if (d->touchPress && (e->screenPos().x() - (qreal)e->screenPos().toPoint().rx() == 0))
++                    return;
++
+                 d->control->moveCursor(d->xToPos(e->pos().x()), select);
+             }
+         }
+@@ -1581,6 +1613,15 @@ void QLineEdit::mouseMoveEvent(QMouseEve
+ void QLineEdit::mouseReleaseEvent(QMouseEvent* e)
+ {
+     Q_D(QLineEdit);
++    if (e->source() == Qt::MouseEventSynthesizedByQt && d->touchPress) {
++        d->touchPress = false;
++        d->touchPopup = true;
++        if (d->doublePress) {
++            d->touchPopup = false;
++            d->doublePress = false;
++        }
++    }
++
+     if (d->sendMouseEventToInputContext(e))
+         return;
+ #if QT_CONFIG(draganddrop)
+@@ -1613,6 +1654,8 @@ void QLineEdit::mouseReleaseEvent(QMouse
+ void QLineEdit::mouseDoubleClickEvent(QMouseEvent* e)
+ {
+     Q_D(QLineEdit);
++    if (e->source() == Qt::MouseEventSynthesizedByQt)
++        d->doublePress = true;
+ 
+     if (e->button() == Qt::LeftButton) {
+         int position = d->xToPos(e->pos().x());
+@@ -2120,6 +2163,12 @@ void QLineEdit::dropEvent(QDropEvent* e)
+ */
+ void QLineEdit::contextMenuEvent(QContextMenuEvent *event)
+ {
++    Q_D(QLineEdit);
++    d->touchPress = false;
++    d->touchPopup = false;
++    d->doublePress = false;
++
++
+     if (QMenu *menu = createStandardContextMenu()) {
+         menu->setAttribute(Qt::WA_DeleteOnClose);
+         menu->popup(event->globalPos());
+Index: qtbase-opensource-src/src/widgets/widgets/qlineedit.h
+===================================================================
+--- qtbase-opensource-src.orig/src/widgets/widgets/qlineedit.h
++++ qtbase-opensource-src/src/widgets/widgets/qlineedit.h
+@@ -251,6 +251,7 @@ private:
+     Q_PRIVATE_SLOT(d_func(), void _q_handleWindowActivate())
+     Q_PRIVATE_SLOT(d_func(), void _q_textEdited(const QString &))
+     Q_PRIVATE_SLOT(d_func(), void _q_cursorPositionChanged(int, int))
++    Q_PRIVATE_SLOT(d_func(), void _q_waitTouchPopup())
+ #if QT_CONFIG(completer)
+     Q_PRIVATE_SLOT(d_func(), void _q_completionHighlighted(const QString &))
+ #endif
+Index: qtbase-opensource-src/src/widgets/widgets/qlineedit_p.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/widgets/widgets/qlineedit_p.cpp
++++ qtbase-opensource-src/src/widgets/widgets/qlineedit_p.cpp
+@@ -142,6 +142,14 @@ void QLineEditPrivate::_q_cursorPosition
+     emit q->cursorPositionChanged(from, to);
+ }
+ 
++void QLineEditPrivate::_q_waitTouchPopup()
++{
++    if (touchPopup) {
++        control->moveCursor(CurrentCursor, modStateMark);
++        touchPopup = false;
++    }
++}
++
+ #ifdef QT_KEYPAD_NAVIGATION
+ void QLineEditPrivate::_q_editFocusChange(bool e)
+ {
+@@ -238,6 +246,12 @@ void QLineEditPrivate::init(const QStrin
+ 
+     q->setAttribute(Qt::WA_MacShowFocusRect);
+ 
++    touchPress = false;
++    touchPopup = false;
++    doublePress = false;
++    oldPosX = 0;
++    CurrentCursor = 0;
++    modStateMark = false;
+     initMouseYThreshold();
+ }
+ 
+Index: qtbase-opensource-src/src/widgets/widgets/qlineedit_p.h
+===================================================================
+--- qtbase-opensource-src.orig/src/widgets/widgets/qlineedit_p.h
++++ qtbase-opensource-src/src/widgets/widgets/qlineedit_p.h
+@@ -190,6 +190,14 @@ public:
+     uint dragEnabled : 1;
+     uint clickCausedFocus : 1;
+     int hscroll;
++
++    int CurrentCursor;
++    bool touchPress;
++    bool touchPopup;
++    bool doublePress;
++    bool modStateMark;
++    qreal oldPosX ;
++
+     int vscroll;
+     uint alignment;
+     static const int verticalMargin;
+@@ -202,6 +210,8 @@ public:
+     void _q_handleWindowActivate();
+     void _q_textEdited(const QString &);
+     void _q_cursorPositionChanged(int, int);
++    void _q_waitTouchPopup();
++
+ #ifdef QT_KEYPAD_NAVIGATION
+     void _q_editFocusChange(bool);
+ #endif
