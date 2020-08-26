@@ -1,0 +1,38 @@
+Index: qtbase-opensource-src/src/widgets/styles/qstyle.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/widgets/styles/qstyle.cpp
++++ qtbase-opensource-src/src/widgets/styles/qstyle.cpp
+@@ -623,10 +623,30 @@ void QStyle::drawItemPixmap(QPainter *pa
+                             const QPixmap &pixmap) const
+ {
+     qreal scale = pixmap.devicePixelRatio();
+-    QRect aligned = alignedRect(QApplication::layoutDirection(), QFlag(alignment), pixmap.size() / scale, rect);
+-    QRect inter = aligned.intersected(rect);
++    Qt::Alignment qAlignment = QFlag(alignment);
++    Qt::LayoutDirection direction = QGuiApplication::layoutDirection();
++    QSizeF size = QSizeF(pixmap.size()) / scale;
++    QRectF rectangle = QRectF(rect);
++
++    qAlignment = visualAlignment(direction, qAlignment);
++    qreal x = rectangle.x();
++    qreal y = rectangle.y();
++    qreal w = size.width();
++    qreal h = size.height();
++    if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
++        y += rectangle.size().height()/2 - h/2;
++    else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
++        y += rectangle.size().height() - h;
++    if ((alignment & Qt::AlignRight) == Qt::AlignRight)
++        x += rectangle.size().width() - w;
++    else if ((alignment & Qt::AlignHCenter) == Qt::AlignHCenter)
++        x += rectangle.size().width()/2 - w/2;
++
++    QRectF aligned(x, y, w, h);
++    QRectF inter = aligned.intersected(rect);
++
++    painter->drawPixmap(QRectF(inter.x(), inter.y(), -1, -1),pixmap,QRectF(inter.x() - aligned.x(), inter.y() - aligned.y(), inter.width() * scale, inter.height() *scale));
+ 
+-    painter->drawPixmap(inter.x(), inter.y(), pixmap, inter.x() - aligned.x(), inter.y() - aligned.y(), inter.width() * scale, inter.height() *scale);
+ }
+ 
+ /*!
