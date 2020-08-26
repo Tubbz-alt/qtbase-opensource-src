@@ -1,0 +1,13 @@
+Index: qtbase-opensource-src/src/gui/kernel/qguiapplication.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/gui/kernel/qguiapplication.cpp
++++ qtbase-opensource-src/src/gui/kernel/qguiapplication.cpp
+@@ -2851,7 +2851,7 @@ void QGuiApplicationPrivate::processTouc
+                     self->synthesizedMousePoints.clear();
+ 
+                 const QList<QTouchEvent::TouchPoint> &touchPoints = touchEvent.touchPoints();
+-                if (eventType == QEvent::TouchBegin)
++                if (eventType == QEvent::TouchBegin || 1 == touchPoints.count())
+                     m_fakeMouseSourcePointId = touchPoints.first().id();
+ 
+                 const QEvent::Type mouseType = [&]() {

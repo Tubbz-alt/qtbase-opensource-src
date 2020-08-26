@@ -62,3 +62,4 @@ QTBUG-82601-Fix-under-non-integer-scaling-incorrect-update-area.patch
 add-single-finger-to-scroll-under-the-touch-screen.patch
 uos-add-sunway-support.patch
 QTBUG-86218-Decimal-zoom-causes-incomplete-picture-display.patch
+QTBUG-86253-Mouse-source-point-error-caused-by-multi-touch.patch
