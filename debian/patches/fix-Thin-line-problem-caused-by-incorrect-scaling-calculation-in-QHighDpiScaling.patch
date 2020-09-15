@@ -1,0 +1,23 @@
+Index: qtbase-opensource-src/src/gui/kernel/qhighdpiscaling.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/gui/kernel/qhighdpiscaling.cpp
++++ qtbase-opensource-src/src/gui/kernel/qhighdpiscaling.cpp
+@@ -383,12 +383,12 @@ qreal QHighDpiScaling::screenSubfactor(c
+             // so recalculate it: divide px (physical pixels) by dp (device-independent pixels)
+             // for both width and height, and then use the average if it is different from
+             // the one initially reported by the screen
+-            QRect screenGeometry = screen->geometry();
+-            qreal wFactor = qreal(screenGeometry.width()) / qRound(screenGeometry.width() / pixelDensity);
+-            qreal hFactor = qreal(screenGeometry.height()) / qRound(screenGeometry.height() / pixelDensity);
+-            qreal averageDensity = (wFactor + hFactor) / 2;
+-            if (!qFuzzyCompare(pixelDensity, averageDensity))
+-                pixelDensity = averageDensity;
++            //QRect screenGeometry = screen->geometry();
++            //qreal wFactor = qreal(screenGeometry.width()) / qRound(screenGeometry.width() / pixelDensity);
++            //qreal hFactor = qreal(screenGeometry.height()) / qRound(screenGeometry.height() / pixelDensity);
++            //qreal averageDensity = (wFactor + hFactor) / 2;
++            //if (!qFuzzyCompare(pixelDensity, averageDensity))
++            //    pixelDensity = averageDensity;
+ 
+             factor *= pixelDensity;
+         }
