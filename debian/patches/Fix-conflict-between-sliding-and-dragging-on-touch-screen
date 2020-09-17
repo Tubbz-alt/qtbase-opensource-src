@@ -1,0 +1,71 @@
+Index: qtbase-opensource-src/src/widgets/itemviews/qlistview.cpp
+===================================================================
+--- qtbase-opensource-src.orig/src/widgets/itemviews/qlistview.cpp
++++ qtbase-opensource-src/src/widgets/itemviews/qlistview.cpp
+@@ -810,31 +810,27 @@ void QListView::mouseMoveEvent(QMouseEve
+             return;
+         }
+ 
+-        if (d->touchSlideTimer.isActive() && (d->pressedPosition - d->offset() - e->pos()).manhattanLength() > 1.5 * QApplication::startDragDistance()) {
+-            // #### move this implementation into a dynamic class
+-            if (d->showElasticBand && d->elasticBand.isValid()) {
+-                d->viewport->update(d->mapToViewport(d->elasticBand));
+-                d->elasticBand = QRect();
+-            }
+-
+-            this->setVerticalScrollMode(ScrollPerPixel);
+-            this->setHorizontalScrollMode(ScrollPerPixel);
+-            QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
+-
+-            QScrollerProperties properties = QScroller::scroller(this)->scrollerProperties();
+-            QVariant overshootPolicy = QVariant::fromValue<QScrollerProperties::OvershootPolicy>(QScrollerProperties::OvershootAlwaysOff);
+-            properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, overshootPolicy);
+-            properties.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, overshootPolicy);
+-            properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.0);
+-            QScroller::scroller(this)->setScrollerProperties(properties);
++        if (d->touchSlideTimer.isActive()) {
++            if ((d->pressedPosition - d->offset() - e->pos()).manhattanLength() > 1.5 * QApplication::startDragDistance()) {
++                clearSelection();
++                this->setVerticalScrollMode(ScrollPerPixel);
++                this->setHorizontalScrollMode(ScrollPerPixel);
++                QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
++
++                QScrollerProperties properties = QScroller::scroller(this)->scrollerProperties();
++                QVariant overshootPolicy = QVariant::fromValue<QScrollerProperties::OvershootPolicy>(QScrollerProperties::OvershootAlwaysOff);
++                properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, overshootPolicy);
++                properties.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, overshootPolicy);
++                properties.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.0);
++                QScroller::scroller(this)->setScrollerProperties(properties);
++
++                QScroller *scroller = QScroller::scroller(this);
++                scroller->handleInput(QScroller::InputPress, e->localPos(), static_cast<qint64>(e->timestamp()));
++                scroller->handleInput(QScroller::InputMove, e->localPos(), static_cast<qint64>(e->timestamp()));
+ 
+-
+-            QScroller *scroller = QScroller::scroller(this);
+-            scroller->handleInput(QScroller::InputPress, e->localPos(), static_cast<qint64>(e->timestamp()));
+-            scroller->handleInput(QScroller::InputMove, e->localPos(), static_cast<qint64>(e->timestamp()));
++            }
+             return;
+         }
+-
+     } else {
+         if (QScroller::hasScroller(this)) {
+             QScroller::ungrabGesture(this);
+@@ -1701,9 +1697,13 @@ bool QListView::isSelectionRectVisible()
+ */
+ bool QListView::event(QEvent *e)
+ {
+-    QScrollEvent *mouseEvent = static_cast<QScrollEvent *>(e);
+-    if (mouseEvent->scrollState() == QScrollEvent::ScrollFinished && QScroller::hasScroller(this)) {
+-        QScroller::scroller(this)->deleteLater();
++    if (e->type() == QEvent::Scroll) {
++        QScrollEvent *mouseEvent = static_cast<QScrollEvent *>(e);
++        if (mouseEvent->scrollState() == QScrollEvent::ScrollFinished && QScroller::hasScroller(this)) {
++            if (QScroller::scroller(this)->state() == QScroller::State::Inactive) {
++                QScroller::scroller(this)->deleteLater();
++            }
++        }
+     }
+     return QAbstractItemView::event(e);
+ }

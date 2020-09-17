@@ -66,3 +66,4 @@ QTBUG-86253-Mouse-source-point-error-caused-by-multi-touch.patch
 QTBUG-85978-85985-QLineEdit-Fix-the-problem-under-the-touch-screen.patch
 fix-single-finger-to-scroll-under-the-touch-screen.patch
 fix-Thin-line-problem-caused-by-incorrect-scaling-calculation-in-QHighDpiScaling.patch
+Fix-conflict-between-sliding-and-dragging-on-touch-screen
