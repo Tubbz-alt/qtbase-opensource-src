@@ -69,3 +69,4 @@ fix-Thin-line-problem-caused-by-incorrect-scaling-calculation-in-QHighDpiScaling
 Fix-conflict-between-sliding-and-dragging-on-touch-screen
 QTBUG-86846-Fixed-the-password-box-not-refreshed-under-Chinese-input-method.patch
 fix-QListView-multiple-selection-conflicts-with-long-press-function.patch
+QTBUG-85088-QGraphicsView-show-error-after-lose-focus.patch
