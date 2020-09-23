@@ -67,3 +67,4 @@ QTBUG-85978-85985-QLineEdit-Fix-the-problem-under-the-touch-screen.patch
 fix-single-finger-to-scroll-under-the-touch-screen.patch
 fix-Thin-line-problem-caused-by-incorrect-scaling-calculation-in-QHighDpiScaling.patch
 Fix-conflict-between-sliding-and-dragging-on-touch-screen
+QTBUG-86846-Fixed-the-password-box-not-refreshed-under-Chinese-input-method.patch
